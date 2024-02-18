@@ -1,0 +1,54 @@
+version: '3.8'
+name: "pegism"
+
+x-default-healthcheck: &health-check
+  interval: 3s
+  timeout: 1s
+  retries: 5
+  start_period: 3s
+
+x-foundry-url: &foundry-url ${FORK_URL}
+x-db-username: &db-username foo
+x-db-password: &db-password bar
+x-default-db-credentials: &db-credentials
+  POSTGRES_USER: *db-username
+  POSTGRES_PASSWORD:  *db-password
+
+services:
+  foundry:
+    image: ghcr.io/foundry-rs/foundry:latest
+    entrypoint: ["sh", "-c", "/app/bootup.sh"]
+    volumes:
+      - ../../tools/forge/:/app
+    healthcheck:
+      <<: *health-check
+      test: [ "CMD", "curl", "-f", "http://localhost:8545" ]
+    environment:
+      FORK_URL: *foundry-url
+    ports:
+      - 127.0.0.1:8545:8545
+  db:
+    image: postgres:13.13-bullseye
+    environment:
+      <<: *db-credentials
+      POSTGRES_DB: baz
+    healthcheck:
+      <<: *health-check
+      test: ["CMD-SHELL", "pg_isready", "-d", "db_prod"]
+    ports:
+      - 127.0.0.1:5432:5432
+  db-admin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    ports:
+      - 127.0.0.1:5098:80
+  migrate-db:
+    image: migrate/migrate
+    volumes:
+      - ../../service/db/migration:/migrations
+    command: ["-path", "/migrations", "-database",  "postgres://foo:bar@db:5432/baz?sslmode=disable", "up"]
+    depends_on:
+      db:
+          condition: service_healthy

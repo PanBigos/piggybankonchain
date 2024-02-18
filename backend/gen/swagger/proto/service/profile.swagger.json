@@ -1,0 +1,258 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "proto/service/profile.proto",
+    "version": "version not set"
+  },
+  "tags": [
+    {
+      "name": "ProfileService"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/v1/profile/register": {
+      "post": {
+        "operationId": "ProfileService_Register",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          },
+          {
+            "name": "Authorization",
+            "description": "The auth header",
+            "in": "header",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "ProfileService"
+        ]
+      }
+    },
+    "/v1/profile/{address}": {
+      "get": {
+        "summary": "GetProfile returns the newest public configuration for the provided user without requiring an authorization token.",
+        "description": "Parameters:\n  address: Ethereum address for which the profile is requested.\n\nHTTP Mapping:\n  GET /v1/profile/{address}",
+        "operationId": "ProfileService_GetProfile",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetProfileResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "address",
+            "description": "Ethereum address for which the profile is requested.",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "ProfileService"
+        ]
+      }
+    },
+    "/v1/profile/{address}/registered": {
+      "get": {
+        "summary": "IsRegistered checks if a user is registered.",
+        "description": "Parameters:\n  address: Ethereum address of the user.\n\nHTTP Mapping:\n  GET /v1/profile/{address}/registered",
+        "operationId": "ProfileService_IsRegistered",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1IsRegisteredResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "address",
+            "description": "Ethereum address for which registration status is requested.",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "ProfileService"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "v1GetProfileResponse": {
+      "type": "object",
+      "properties": {
+        "profile": {
+          "$ref": "#/definitions/v1Profile",
+          "description": "The profile of the requested user."
+        }
+      },
+      "description": "GetProfileResponse represents the response to a profile retrieval request."
+    },
+    "v1IsRegisteredResponse": {
+      "type": "object",
+      "properties": {
+        "registered": {
+          "type": "boolean",
+          "description": "Indicates whether the user is registered."
+        }
+      },
+      "description": "IsRegisteredResponse represents the response to a registration status request."
+    },
+    "v1Piggy": {
+      "type": "object",
+      "properties": {
+        "address": {
+          "type": "string",
+          "title": "Ethereum address"
+        },
+        "creator": {
+          "type": "string",
+          "title": "Ethereum address"
+        },
+        "owner": {
+          "type": "string",
+          "title": "Ethereum address"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "addedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "unlocksAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "displayName": {
+          "type": "string"
+        },
+        "messages": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1PiggyMessage"
+          }
+        }
+      }
+    },
+    "v1PiggyMessage": {
+      "type": "object",
+      "properties": {
+        "address": {
+          "type": "string",
+          "title": "Ethereum address"
+        },
+        "token": {
+          "type": "string",
+          "title": "Ethereum address"
+        },
+        "amount": {
+          "type": "string"
+        },
+        "fee": {
+          "type": "string"
+        },
+        "content": {
+          "type": "string"
+        },
+        "nick": {
+          "type": "string"
+        }
+      }
+    },
+    "v1Profile": {
+      "type": "object",
+      "properties": {
+        "address": {
+          "type": "string",
+          "title": "Ethereum address"
+        },
+        "piggies": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1Piggy"
+          }
+        }
+      },
+      "description": "Message to represent the profile."
+    }
+  }
+}

@@ -1,0 +1,77 @@
+version: '3.8'
+name: "pegism"
+
+x-default-healthcheck: &health-check
+  interval: 3s
+  timeout: 1s
+  retries: 5
+  start_period: 3s
+
+x-foundry-url: &foundry-url ${FORK_URL}
+x-db-username: &db-username ${PEGISM_DB_USER}
+x-db-password: &db-password ${PEGISM_DB_PASSWORD}
+x-default-db-credentials: &db-credentials
+  POSTGRES_USER: *db-username
+  POSTGRES_PASSWORD:  *db-password
+
+services:
+  foundry:
+    image: ghcr.io/foundry-rs/foundry:latest
+    entrypoint: ["sh", "-c", "/app/bootup.sh"]
+    volumes:
+      - ../../tools/forge/:/app
+    healthcheck:
+      <<: *health-check
+      test: [ "CMD", "curl", "-f", "http://localhost:8545" ]
+    environment:
+      FORK_URL: *foundry-url
+  db:
+    image: postgres:13.13-bullseye
+    restart: always
+    environment:
+      <<: *db-credentials
+      POSTGRES_DB: pegism
+    healthcheck:
+      <<: *health-check
+      test: ["CMD-SHELL", "pg_isready", "-d", "db_prod"]
+  migrate-db:
+    image: migrate/migrate
+    volumes:
+      - ../../service/db/migration:/migrations
+    command: ["-path", "/migrations", "-database",  "postgres://${PEGISM_DB_USER}:${PEGISM_DB_PASSWORD}@db:5432/pegism?sslmode=disable", "up"]
+    depends_on:
+      db:
+          condition: service_healthy
+  dbadmin:
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    ports:
+      - 127.0.0.1:5098:80
+  piggy:
+    image: github.com/exca-dk/peggism-go/piggy:latest
+    command:
+      --logging=TRACE
+      --rpc.server.host=0.0.0.0
+      --rpc.server.port=5050
+      --node.endpoint=http://foundry:8545
+      --db.endpoint=db:5432
+      --db.name=pegism
+      --contract.factory.address=0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9
+      --contract.router.address=0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0
+    environment:
+      db.username: *db-username
+      db.password: *db-password
+      auth.issuer.secret: ${PEGISM_AUTH_ISSUER_SECRET:-very-very-secret-password-0123456789}
+    depends_on:
+      foundry:
+        condition: service_started
+      migrate-db:
+        condition: service_completed_successfully
+    ports:
+      - 127.0.0.1:5050:5050
+      - 127.0.0.1:5051:5051
+
+    

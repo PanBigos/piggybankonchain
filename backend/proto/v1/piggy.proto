@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package pegism.v1;
+
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+message PiggyMessage {
+    string address = 1;  // Ethereum address
+    string token = 2; // Ethereum address
+    string amount = 3; 
+    string fee   = 4; 
+    string content = 5;
+    string nick = 6;
+}
+
+message Piggy {
+    string address = 1;  // Ethereum address
+    string creator = 2; // Ethereum address
+    string owner = 3; // Ethereum address
+    google.protobuf.Timestamp created_at   = 4;
+    google.protobuf.Timestamp  added_at        = 5;
+    google.protobuf.Timestamp  unlocks_at      = 6;
+    optional string display_name = 7; 
+    repeated PiggyMessage messages = 8;
+}
+
+message GetPiggyRequest {
+    string address = 1; 
+}
+
+message GetPiggyResponse {
+    Piggy piggy = 1;
+}
+
+message UpdatePiggyNameRequest {
+    string address = 1; 
+    string name = 2;
+}
+
+message UpdatePiggyNameResponse {
+    Piggy piggy = 1;
+}
+
+message GetPiggyFromNameRequest {
+    string name = 1; 
+}
+
+message GetPiggyFromNameResponse {
+    Piggy piggy = 1;
+}

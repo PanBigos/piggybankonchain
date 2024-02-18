@@ -1,0 +1,258 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "proto/service/auth.proto",
+    "version": "version not set"
+  },
+  "tags": [
+    {
+      "name": "AuthorizationService"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/v1/auth": {
+      "post": {
+        "summary": "Authorize is used to obtain an access token for authentication.",
+        "description": "Parameters:\n  - AuthRequest: Input containing authentication details.\n\nReturns:\n  - AuthResponse: Response containing the access token.\n\nHTTP Mapping:\n  POST /v1/auth\n  Body: \"*\"",
+        "operationId": "AuthorizationService_Authorize",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1AuthResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "description": "Request for authenticating a user, includes authentication arguments.",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1AuthRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AuthorizationService"
+        ]
+      }
+    },
+    "/v1/auth/message": {
+      "get": {
+        "summary": "GetAuthMessage returns an unsigned message for registration at the provided address.",
+        "description": "Parameters:\n  - AuthMessageRequest: Input containing details for authentication message request.\n\nReturns:\n  - AuthMessageResponse: Response containing the unsigned authentication message.\n\nHTTP Mapping:\n  GET /v1/auth/message",
+        "operationId": "AuthorizationService_GetAuthMessage",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1AuthMessageResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "address",
+            "description": "Ethereum address for which the unsigned auth message is requested.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "AuthorizationService"
+        ]
+      }
+    },
+    "/v1/auth/refresh": {
+      "post": {
+        "summary": "Refresh returns an new access token with its expiration.",
+        "description": "Parameters:\n  - RefreshMessageRequest: Input containing valid access token.\n\nReturns:\n  - RefreshMessageResponse: Response containing access token.\n\nHTTP Mapping:\n  GET /v1/auth/refresh",
+        "operationId": "AuthorizationService_Refresh",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1RefreshMessageResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "description": "Request for obtaining an unsigned authentication message.",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1RefreshMessageRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AuthorizationService"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "AuthResponseAuthorizationDataContainer": {
+      "type": "object",
+      "properties": {
+        "accessToken": {
+          "type": "string",
+          "description": "Access token for authentication."
+        },
+        "refreshToken": {
+          "type": "string",
+          "description": "Refresh token for refreshing authentication."
+        },
+        "accessTokenExpiresAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp for access token expiration."
+        },
+        "refreshTokenExpiresAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp for refresh token expiration."
+        }
+      },
+      "description": "Container for authorization data."
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "v1AuthArgs": {
+      "type": "object",
+      "properties": {
+        "sig": {
+          "type": "string",
+          "title": "signature of message"
+        },
+        "msg": {
+          "type": "string",
+          "title": "message thats been signed. usually it is UnsignedAuthMessage.content"
+        }
+      }
+    },
+    "v1AuthMessageResponse": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "$ref": "#/definitions/v1UnsignedAuthMessage",
+          "description": "Unsigned authentication message."
+        }
+      },
+      "description": "Response for obtaining an unsigned authentication message, returns UnsignedAuthMessage."
+    },
+    "v1AuthRequest": {
+      "type": "object",
+      "properties": {
+        "args": {
+          "$ref": "#/definitions/v1AuthArgs",
+          "description": "Authentication arguments for the request."
+        }
+      },
+      "description": "Request for authenticating a user, includes authentication arguments."
+    },
+    "v1AuthResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/AuthResponseAuthorizationDataContainer",
+          "description": "Authorization data container."
+        }
+      },
+      "description": "Response for authenticating a user, returns AuthorizationDataContainer."
+    },
+    "v1RefreshMessageRequest": {
+      "type": "object",
+      "properties": {
+        "refreshToken": {
+          "type": "string"
+        }
+      },
+      "description": "Request for obtaining an unsigned authentication message."
+    },
+    "v1RefreshMessageResponse": {
+      "type": "object",
+      "properties": {
+        "accessToken": {
+          "type": "string",
+          "description": "The access token itself."
+        },
+        "expiresAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp for access token expiration."
+        }
+      },
+      "description": "Request for obtaining an unsigned authentication message."
+    },
+    "v1UnsignedAuthMessage": {
+      "type": "object",
+      "properties": {
+        "content": {
+          "type": "string"
+        },
+        "deadline": {
+          "type": "string",
+          "format": "date-time",
+          "title": "deadline of content"
+        }
+      },
+      "description": "UnsignedAuthMessage is a message that includes unsgined content and deadline."
+    }
+  }
+}

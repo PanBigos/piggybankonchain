@@ -1,0 +1,262 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "proto/service/piggy.proto",
+    "version": "version not set"
+  },
+  "tags": [
+    {
+      "name": "PiggyService"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/v1/piggy/name/{name}": {
+      "get": {
+        "operationId": "PiggyService_GetPiggyFromName",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetPiggyFromNameResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "PiggyService"
+        ]
+      }
+    },
+    "/v1/piggy/profile/{address}": {
+      "get": {
+        "operationId": "PiggyService_GetPiggyFromProfile",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetPiggyResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "address",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "PiggyService"
+        ]
+      }
+    },
+    "/v1/piggy/{address}": {
+      "get": {
+        "operationId": "PiggyService_GetPiggy",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetPiggyResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "address",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "PiggyService"
+        ]
+      },
+      "post": {
+        "operationId": "PiggyService_UpdatePiggyName",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1UpdatePiggyNameResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "address",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "PiggyService"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "v1GetPiggyFromNameResponse": {
+      "type": "object",
+      "properties": {
+        "piggy": {
+          "$ref": "#/definitions/v1Piggy"
+        }
+      }
+    },
+    "v1GetPiggyResponse": {
+      "type": "object",
+      "properties": {
+        "piggy": {
+          "$ref": "#/definitions/v1Piggy"
+        }
+      }
+    },
+    "v1Piggy": {
+      "type": "object",
+      "properties": {
+        "address": {
+          "type": "string",
+          "title": "Ethereum address"
+        },
+        "creator": {
+          "type": "string",
+          "title": "Ethereum address"
+        },
+        "owner": {
+          "type": "string",
+          "title": "Ethereum address"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "addedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "unlocksAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "displayName": {
+          "type": "string"
+        },
+        "messages": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1PiggyMessage"
+          }
+        }
+      }
+    },
+    "v1PiggyMessage": {
+      "type": "object",
+      "properties": {
+        "address": {
+          "type": "string",
+          "title": "Ethereum address"
+        },
+        "token": {
+          "type": "string",
+          "title": "Ethereum address"
+        },
+        "amount": {
+          "type": "string"
+        },
+        "fee": {
+          "type": "string"
+        },
+        "content": {
+          "type": "string"
+        },
+        "nick": {
+          "type": "string"
+        }
+      }
+    },
+    "v1UpdatePiggyNameResponse": {
+      "type": "object",
+      "properties": {
+        "piggy": {
+          "$ref": "#/definitions/v1Piggy"
+        }
+      }
+    }
+  }
+}

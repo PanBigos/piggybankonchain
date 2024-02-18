@@ -1,0 +1,70 @@
+syntax = "proto3";
+
+package pegism.v1;
+
+import "google/protobuf/timestamp.proto";
+
+
+
+message AuthArgs { 
+    // signature of message
+    string sig = 1;
+    // message thats been signed. usually it is UnsignedAuthMessage.content
+    string msg = 2;
+}
+
+// UnsignedAuthMessage is a message that includes unsgined content and deadline.
+message UnsignedAuthMessage {
+    string content = 1;
+    // deadline of content
+    google.protobuf.Timestamp deadline = 2;
+}
+
+
+// Request for authenticating a user, includes authentication arguments.
+message AuthRequest {
+    AuthArgs args = 1; // Authentication arguments for the request.
+}
+
+// Response for authenticating a user, returns AuthorizationDataContainer.
+message AuthResponse {
+    AuthorizationDataContainer data = 1; // Authorization data container.
+
+    // Container for authorization data.
+    message AuthorizationDataContainer {
+        // Access token for authentication.
+        string access_token = 1; 
+        // Refresh token for refreshing authentication.
+        string refresh_token = 2; 
+        // Timestamp for access token expiration.
+        google.protobuf.Timestamp access_token_expires_at = 3; 
+        // Timestamp for refresh token expiration.
+        google.protobuf.Timestamp refresh_token_expires_at = 4; 
+    }
+}
+
+// Request for obtaining an unsigned authentication message.
+message AuthMessageRequest {
+    // Ethereum address for which the unsigned auth message is requested.
+    string address = 1; 
+}
+
+// Response for obtaining an unsigned authentication message, returns UnsignedAuthMessage.
+message AuthMessageResponse {
+    // Unsigned authentication message.
+    UnsignedAuthMessage message = 1;
+}
+
+
+// Request for obtaining an unsigned authentication message.
+message RefreshMessageRequest {
+    string refresh_token = 1; 
+}
+
+// Request for obtaining an unsigned authentication message.
+message RefreshMessageResponse {
+    // The access token itself.
+    string access_token = 1; 
+    // Timestamp for access token expiration.
+    google.protobuf.Timestamp expires_at = 2; 
+}

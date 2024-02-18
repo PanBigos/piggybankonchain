@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package pegism.v1;
+
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+import "proto/v1/piggy.proto";
+
+
+// Message to represent the profile.
+message Profile {
+    string address = 1; // Ethereum address
+    repeated Piggy piggies = 2;
+}
+
+// requests / responses
+
+// GetProfileRequest represents a request to get the profile of a user.
+message GetProfileRequest {
+    // Ethereum address for which the profile is requested.
+    string address = 1; 
+}
+
+// GetProfileResponse represents the response to a profile retrieval request.
+message GetProfileResponse {
+    // The profile of the requested user.
+    Profile profile = 1;
+}
+
+
+// IsRegisteredRequest represents a request to check if user is registered.
+message IsRegisteredRequest {
+    // Ethereum address for which registration status is requested.
+    string address = 1;
+}
+
+// IsRegisteredResponse represents the response to a registration status request.
+message IsRegisteredResponse {
+    // Indicates whether the user is registered.
+    bool registered = 1;
+}
+

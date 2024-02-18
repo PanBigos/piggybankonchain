@@ -1,0 +1,10 @@
+version: "2"
+sql:
+  - engine: "postgresql"
+    queries: "./service/db/query/"
+    schema: "./service/db/migration/"
+    gen:
+      go:
+        package: "sqlc"
+        out: "./service/db/sqlc"
+        emit_interface: true

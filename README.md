@@ -1,2 +1,1 @@
-# piggybank-onchain
 # piggybankonchain

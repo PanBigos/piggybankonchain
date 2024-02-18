@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package pegism.service;
+
+import "protoc-gen-openapiv2/options/annotations.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/descriptor.proto";
+import "google/protobuf/empty.proto";
+
+import "proto/v1/piggy.proto";
+import "proto/v1/authorization.proto";
+
+
+service PiggyService {
+    rpc UpdatePiggyName(v1.UpdatePiggyNameRequest) returns (v1.UpdatePiggyNameResponse) {
+        option (google.api.http) = {
+            post: "/v1/piggy/{address}"
+        };
+    }
+
+    rpc GetPiggy(v1.GetPiggyRequest) returns (v1.GetPiggyResponse) {
+        option (google.api.http) = {
+            get: "/v1/piggy/{address}"
+        };
+    }
+
+    rpc GetPiggyFromProfile(v1.GetPiggyRequest) returns (v1.GetPiggyResponse) {
+        option (google.api.http) = {
+            get: "/v1/piggy/profile/{address}"
+        };
+    }
+
+    rpc GetPiggyFromName(v1.GetPiggyFromNameRequest) returns (v1.GetPiggyFromNameResponse) {
+        option (google.api.http) = {
+            get: "/v1/piggy/name/{name}"
+        };
+    }
+}
+    

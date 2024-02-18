@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  streamer:
+    image: github.com/exca-dk/peggism-go/piggy:latest
+    build:
+      args: 
+        ACCESS_TOKEN: $GITHUB_TOKEN
+      context: ../..
+      dockerfile: ./infra/build/Dockerfile
+ 

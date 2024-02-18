@@ -1,0 +1,66 @@
+syntax = "proto3";
+
+package pegism.service;
+
+import "protoc-gen-openapiv2/options/annotations.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/descriptor.proto";
+import "google/protobuf/empty.proto";
+
+import "proto/v1/authorization.proto";
+
+// The AuthorizationService provides methods for user authorization.
+service AuthorizationService {
+
+    // Authorize is used to obtain an access token for authentication.
+    //
+    // Parameters:
+    //   - AuthRequest: Input containing authentication details.
+    //
+    // Returns:
+    //   - AuthResponse: Response containing the access token.
+    //
+    // HTTP Mapping:
+    //   POST /v1/auth
+    //   Body: "*"
+    rpc Authorize(v1.AuthRequest) returns (v1.AuthResponse) {
+        option (google.api.http) = { 
+            post: "/v1/auth"
+            body: "*"
+        };
+    }
+
+    
+    // GetAuthMessage returns an unsigned message for registration at the provided address.
+    //
+    // Parameters:
+    //   - AuthMessageRequest: Input containing details for authentication message request.
+    //
+    // Returns:
+    //   - AuthMessageResponse: Response containing the unsigned authentication message.
+    //
+    // HTTP Mapping:
+    //   GET /v1/auth/message
+    rpc GetAuthMessage(v1.AuthMessageRequest) returns (v1.AuthMessageResponse) {
+        option (google.api.http) = { 
+            get: "/v1/auth/message"
+        };
+    }
+
+     // Refresh returns an new access token with its expiration.
+    //
+    // Parameters:
+    //   - RefreshMessageRequest: Input containing valid access token.
+    //
+    // Returns:
+    //   - RefreshMessageResponse: Response containing access token.
+    //
+    // HTTP Mapping:
+    //   GET /v1/auth/refresh
+    rpc Refresh(v1.RefreshMessageRequest) returns (v1.RefreshMessageResponse) {
+        option (google.api.http) = { 
+            post: "/v1/auth/refresh"
+            body: "*"
+        };
+    }
+}

@@ -1,0 +1,57 @@
+syntax = "proto3";
+
+package pegism.service;
+
+import "protoc-gen-openapiv2/options/annotations.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/descriptor.proto";
+import "google/protobuf/empty.proto";
+
+import "proto/v1/profile.proto";
+import "proto/v1/authorization.proto";
+
+service ProfileService {
+
+    rpc Register(google.protobuf.Empty) returns (google.protobuf.Empty) {
+        option (google.api.http) = {
+            post: "/v1/profile/register"
+            body: "*"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            parameters: {
+                headers: {
+                  name: "Authorization";
+                  description: "The auth header";
+                  type: STRING,
+                  required: true;
+                }
+            }
+        };
+    }
+
+    // IsRegistered checks if a user is registered.
+    //
+    // Parameters:
+    //   address: Ethereum address of the user.
+    //
+    // HTTP Mapping:
+    //   GET /v1/profile/{address}/registered
+    rpc IsRegistered(v1.IsRegisteredRequest) returns (v1.IsRegisteredResponse) {
+        option (google.api.http) = {
+            get: "/v1/profile/{address}/registered"
+        };
+    }
+
+    // GetProfile returns the newest public configuration for the provided user without requiring an authorization token.
+    //
+    // Parameters:
+    //   address: Ethereum address for which the profile is requested.
+    //
+    // HTTP Mapping:
+    //   GET /v1/profile/{address}
+    rpc GetProfile(v1.GetProfileRequest) returns (v1.GetProfileResponse) {
+        option (google.api.http) = { 
+            get: "/v1/profile/{address}"
+        };
+    }
+}
